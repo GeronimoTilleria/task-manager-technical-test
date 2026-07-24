@@ -1,0 +1,104 @@
+<h1>
+  <%= @project.title %>
+</h1>
+
+
+<p>
+  <strong>Status:</strong>
+  <%= @project.status %>
+</p>
+
+
+<p>
+  <strong>Progress:</strong>
+  <%= @project.progress_percentage %>%
+</p>
+
+
+<hr>
+
+
+<h2>Tasks</h2>
+
+
+<% @project.tasks.each do |task| %>
+
+  <div class="<%= 'overdue' if task.overdue? %>">
+
+    <p>
+      <strong>
+        <%= task.title %>
+      </strong>
+    </p>
+
+
+    <p>
+      Due date:
+      <%= task.due_date %>
+    </p>
+
+
+    <p>
+      Status:
+
+      <% if task.done? %>
+        ✅ Completed
+      <% else %>
+        ⏳ Pending
+      <% end %>
+
+    </p>
+
+
+    <% unless task.done? %>
+
+      <%= button_to(
+            "Mark as completed",
+            project_task_path(@project, task),
+            method: :patch
+          ) %>
+
+    <% end %>
+
+
+  </div>
+
+
+<% end %>
+
+
+<hr>
+
+
+<h2>
+  New Task
+</h2>
+
+
+<%= form_with(
+      model: [@project, @task]
+    ) do |form| %>
+
+
+  <div>
+
+    <%= form.label :title %>
+
+    <%= form.text_field :title %>
+
+  </div>
+
+
+  <div>
+
+    <%= form.label :due_date %>
+
+    <%= form.date_field :due_date %>
+
+  </div>
+
+
+  <%= form.submit "Create Task" %>
+
+
+<% end %>
