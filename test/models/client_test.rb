@@ -26,9 +26,11 @@ class ClientTest < ActiveSupport::TestCase
   # Caso 5: Cliente no elimina proyectos activos
   test "should not destroy client if it has active projects" do
     client = clients(:one)
+
+    # client.projects.destroy_all
   
-    # Cambiamos 'name:' por 'title:'
-    client.projects.create!(title: "Sistema ERP", status: "active")
+    client.projects.create!(title: "Sistema ERP", status: :active)
+    client.reload
 
     assert_no_difference("Client.count") do
       client.destroy

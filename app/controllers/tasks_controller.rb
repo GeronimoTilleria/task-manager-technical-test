@@ -6,9 +6,9 @@ class TasksController < ApplicationController
         @task = @project.tasks.build(task_params)
 
         if @task.save
-            redirect_to @project
+            redirect_to @project, notice: "Tarea creada correctamente."
         else
-            render "projects/show"
+            render "projects/show", status: :unprocessable_entity
         end
     end
 
@@ -27,6 +27,6 @@ class TasksController < ApplicationController
     end
 
     def task_params
-        params.require(:task).permit(:title, :due_date)
+        params.require(:task).permit(:title, :due_date, :done)
     end
 end

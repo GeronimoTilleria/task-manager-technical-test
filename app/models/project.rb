@@ -13,9 +13,12 @@ class Project < ApplicationRecord
   validates :status, presence: true
 
   def progress_percentage
-    return 0 if tasks.empty?
-    completed = tasks.where(done: true).size
-    ((completed.to_f / tasks.count) * 100).round
+    total_tasks = tasks.count
+
+    return 0 if total_tasks.zero?
+
+    completed = tasks.where(done: true).count
+    ((completed.to_f / total_tasks) * 100).round
   end
   
 end

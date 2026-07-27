@@ -1,104 +1,92 @@
-<h1>
-  <%= @project.title %>
-</h1>
+<!-- Cabecera del Proyecto -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <h1 class="h2 fw-bold text-dark mb-1"><%= @project.title %></h1>
+        <span class="badge bg-primary text-uppercase fs-7"><%= @project.status %></span>
+      </div>
+      <%= link_to "Volver", projects_path, class: "btn btn-sm btn-outline-secondary" %>
+    </div>
 
+    <div class="mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="fw-semibold text-secondary">Progreso General</span>
+        <span class="fw-bold text-primary"><%= @project.progress_percentage %>%</span>
+      </div>
+      <div class="progress" style="height: 10px;">
+        <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: <%= @project.progress_percentage %>%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<p>
-  <strong>Status:</strong>
-  <%= @project.status %>
-</p>
+<div class="row g-4">
+  <!-- Listado de Tareas -->
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white py-3">
+        <h3 class="h5 card-title m-0 fw-bold">Tareas</h3>
+      </div>
+      <div class="card-body">
+        <% if @project.tasks.select(&:persisted?).any? %>
+          <div class="list-group list-group-flush">
+            <% @project.tasks.select(&:persisted?).each do |task| %>
+              <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center <%= 'bg-light-subtle' if task.overdue? %>">
+                <div>
+                  <h6 class="mb-1 fw-semibold <%= 'text-decoration-line-through text-muted' if task.done? %>">
+                    <%= task.title %>
+                  </h6>
+                  <div class="small text-muted">
+                    <span>Due date: <%= task.due_date %></span>
+                    <% if task.overdue? && !task.done? %>
+                      <span class="badge bg-danger ms-1">Vencida</span>
+                    <% end %>
+                  </div>
+                </div>
 
-
-<p>
-  <strong>Progress:</strong>
-  <%= @project.progress_percentage %>%
-</p>
-
-
-<hr>
-
-
-<h2>Tasks</h2>
-
-
-<% @project.tasks.each do |task| %>
-
-  <div class="<%= 'overdue' if task.overdue? %>">
-
-    <p>
-      <strong>
-        <%= task.title %>
-      </strong>
-    </p>
-
-
-    <p>
-      Due date:
-      <%= task.due_date %>
-    </p>
-
-
-    <p>
-      Status:
-
-      <% if task.done? %>
-        ✅ Completed
-      <% else %>
-        ⏳ Pending
-      <% end %>
-
-    </p>
-
-
-    <% unless task.done? %>
-
-      <%= button_to(
-            "Mark as completed",
-            project_task_path(@project, task),
-            method: :patch
-          ) %>
-
-    <% end %>
-
-
+                <div>
+                  <% if task.done? %>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                      ✅ Completada
+                    </span>
+                  <% else %>
+                    <%= button_to project_task_path(@project, task), method: :patch, class: "btn btn-sm btn-outline-success" do %>
+                      Marcar completada
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted my-3 text-center">No hay tareas asignadas a este proyecto.</p>
+        <% end %>
+      </div>
+    </div>
   </div>
 
+  <!-- Formulario Nueva Tarea -->
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h3 class="h5 card-title m-0 fw-bold">Nueva Tarea</h3>
+      </div>
+      <div class="card-body">
+        <%= form_with(model: [@project, @task]) do |form| %>
+          <div class="mb-3">
+            <%= form.label :title, "Título de la tarea", class: "form-label fw-semibold" %>
+            <%= form.text_field :title, class: "form-control", placeholder: "Ej. Crear base de datos" %>
+          </div>
 
-<% end %>
+          <div class="mb-4">
+            <%= form.label :due_date, "Fecha límite", class: "form-label fw-semibold" %>
+            <%= form.date_field :due_date, class: "form-control" %>
+          </div>
 
-
-<hr>
-
-
-<h2>
-  New Task
-</h2>
-
-
-<%= form_with(
-      model: [@project, @task]
-    ) do |form| %>
-
-
-  <div>
-
-    <%= form.label :title %>
-
-    <%= form.text_field :title %>
-
+          <%= form.submit "Crear Tarea", class: "btn btn-primary w-100" %>
+        <% end %>
+      </div>
+    </div>
   </div>
-
-
-  <div>
-
-    <%= form.label :due_date %>
-
-    <%= form.date_field :due_date %>
-
-  </div>
-
-
-  <%= form.submit "Create Task" %>
-
-
-<% end %>
+</div>

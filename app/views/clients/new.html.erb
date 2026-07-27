@@ -1,0 +1,39 @@
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h2 class="h3 card-title mb-4 fw-bold">Nuevo Cliente</h2>
+
+        <%= form_with(model: @client) do |form| %>
+          <% if @client.errors.any? %>
+            <div class="alert alert-danger border-0 shadow-sm mb-4" role="alert">
+              <h6 class="alert-heading fw-bold mb-2">
+                <%= pluralize(@client.errors.count, "error") %> impidieron guardar este cliente:
+              </h6>
+              <ul class="mb-0 ps-3">
+                <% @client.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="mb-3">
+            <%= form.label :name, "Nombre completo", class: "form-label fw-semibold" %>
+            <%= form.text_field :name, class: "form-control", placeholder: "Ej. Juan Pérez" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :email, "Correo electrónico", class: "form-label fw-semibold" %>
+            <%= form.email_field :email, class: "form-control", placeholder: "ejemplo@correo.com" %>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <%= link_to "Volver a Proyectos", projects_path, class: "btn btn-outline-secondary" %>
+            <%= form.submit "Guardar Cliente", class: "btn btn-primary px-4" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
